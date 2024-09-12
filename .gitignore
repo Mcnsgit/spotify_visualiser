@@ -23,7 +23,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
+node_modules
+dist
+.env
 *storybook.log
 # React Component Preview
 previewConfig.json
