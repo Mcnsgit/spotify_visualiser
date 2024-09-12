@@ -12,6 +12,9 @@
     "preview": "vite preview",
     "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
+  "jest": {
+    "testEnvironment": "jsdom"
+  },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.13.3",
