@@ -15,7 +15,7 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [react()],
     build: {
-      outDir: 'dist',
+      outDir: './dist',
       rollupOptions: {
         output: {
           manualChunks: {
