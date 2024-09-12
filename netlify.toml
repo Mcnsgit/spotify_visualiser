@@ -1,17 +1,11 @@
-[
-build
-]
+[build]
   command = "npm run build"
   publish = "dist"
 
-[
-dev
-]
+[dev]
   command = "npm run dev"
 
-[[
-redirects
-]]
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
