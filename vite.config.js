@@ -23,27 +23,37 @@ export default({ mode }) => {
   plugins: [react()],
   build: {
     outDir: 'dist',
-  },
-  server: {
-    https: {
-      key: fs.readFileSync(path.resolve(__dirname, 'ssl/key.pem')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'ssl/cert.pem')),
-    },
-    host: 'localhost',
-    port: 3000,
-    proxy: {
-      '/api': {
-        target: 'https://localhost:3001',
-        changeOrigin: true,
-        secure: false,
-        configure: (proxy, options) => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            proxyReq.setHeader('Origin', 'https://localhost:3000');
-          });
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'three', '@react-three/fiber', '@react-three/drei'],
+          chakra: ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
         },
-      }
+      },
     },
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'three', '@react-three/fiber', '@react-three/drei', '@chakra-ui/react'],
+  },
+  ...(isDev && {
+    server: {
+      https: httpsConfig,
+      host: 'localhost',
+      port: 3000,
+      proxy: {
+        '/api': {
+          target: 'https://localhost:3001',
+          changeOrigin: true,
+          secure: false,
+          configure: (proxy, options) => {
+            proxy.on('proxyReq', (proxyReq, req, res) => {
+              proxyReq.setHeader('Origin', 'https://localhost:3000');
+            });
+          },
+        }
+      },
+    },
+  }),
   assetsInclude: [
     "**/*.mp3",
     "**/*.mp4",

@@ -6,7 +6,7 @@ import SongCard from "./playerComponents/songCard/index";
 import Queue from "./playerComponents/queue/index";
 import Widgets from "./playerComponents/widgets/index";
 import instance from "../../utils/axios";
-import { fetchPlaylistTracks } from "../../services/AuthService";
+import { fetchPlaylistTracks } from "../../api/api"
 import WebPlayback from "../../spotify/WebSDKPlayer";
 import Volume from "./Controls/volume/Volume";
 export default function Player() {
