@@ -1,0 +1,36 @@
+.left-section {
+  display: flex;
+  top:160px;
+  flex-direction: column;
+  height: calc(100vh - 50px); /* Adjusting for header height */
+  width: 300px;
+  padding-top: 20px; /* Added padding to move content higher */
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.side-menu {
+  flex: 1;
+  top:160px;
+  overflow-y: auto;
+}
+
+.side-menu-container {
+  list-style: none;
+  top:160px;
+  padding: 0;
+  margin: 0;
+}
+
+.library-header {
+  padding: 10px;
+}
+
+.user-playlist-container {
+  padding: 10px 0;
+}
+
+.button-section {
+  padding: 10px;
+  text-align: center;
+}

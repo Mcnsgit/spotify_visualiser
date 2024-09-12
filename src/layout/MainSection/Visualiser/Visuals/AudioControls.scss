@@ -1,0 +1,170 @@
+.track-details {
+  position: absolute;
+  left: 20px;
+  line-height: 22px;
+}
+
+.track-controls .track-name {
+  font-family: 'Proxima Nova', Georgia, sans-serif;
+  color: #fff;
+  font-size: 14px;
+}
+
+.track-controls .artist-name {
+  font-family: 'Proxima Thin', Georgia, sans-serif;
+  color: #aaa;
+  font-size: 12px;
+}
+
+.controls-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.forward,
+.reverse,
+.play-btn {
+  padding: 0 5px;
+  color: rgb(179, 179, 179);
+  cursor: pointer;
+}
+
+.reverse,
+.forward {
+  font-size: 16px;
+}
+
+.track-control .control-button .play-btn {
+  position: relative;
+  top: -7px;
+  font-size: 40px;
+}
+
+.track-control .control-button .pause-btn {
+  position: relative;
+  top: -7px;
+  font-size: 40px;
+  margin: 0 5px;
+}
+
+.play-btn .fa {
+  -webkit-text-stroke: 4px rgb(40, 40, 40);
+}
+
+.track-progress-container {
+  margin-top: -10px;
+  display: flex;
+  justify-content: center;
+}
+
+.track-progress {
+  width: 500px;
+  height: 4px;
+  background: rgb(64, 64, 64);
+  border-radius: 4px;
+}
+
+.track-expired {
+  margin: 0;
+  width: 100px;
+  height: 4px;
+  background: #1db954;
+  border-radius: 4px;
+}
+
+.timer-start {
+  font-size: 12px;
+  position: relative;
+  top: -5px;
+  left: -10px;
+}
+
+.timer-end {
+  font-size: 12px;
+  position: relative;
+  top: -5px;
+  left: 10px;
+}
+
+.progress-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+
+  .progress {
+    width: 100%;
+    height: 8px;
+    background-color: #535353;
+    margin: 0 10px;
+    border-radius: 4px;
+  }
+}
+
+.track-sider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.SliderContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+
+  .progress {
+    width: 100%;
+    height: 8px;
+    background-color: #535353;
+    margin: 0 10px;
+    border-radius: 4px;
+  }
+}
+
+.SliderTrack {
+  position: relative;
+  height: 8px;
+  width: 100%;
+  background-color: #535353;
+  margin: 0 10px;
+  border-radius: 4px;
+}
+
+.SliderBar {
+  position: absolute;
+  border-radius: 4px;
+  background-color: #1db954;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+}
+
+.SliderHandle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #1db954;
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform 0.2s;
+  top: 50%;
+
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.3);
+  }
+}
+
+.FormattedTime {
+  color: #b3b3b3;
+  font-size: 12px;
+}

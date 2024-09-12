@@ -1,0 +1,95 @@
+.album-container {
+  max-width: initial !important;
+  width: 100%;
+}
+@media (max-width: 900px) {
+  .album-container {
+    margin: 0 auto;
+    width: 80%;
+  }
+}
+.album-container .add-remove-section .fa {
+  margin-top: 9px !important;
+  margin-left: 4px !important;
+  text-align: center;
+}
+.album-container .cd-header {
+  line-height: 40px;
+  padding-left: 17px;
+  font-size: 15px;
+  color: #ccc;
+}
+.album-container .track-number-header {
+  width: 58px !important;
+}
+.album-container .track-number-header p {
+  font-family: "Proxima Thin", Georgia, sans-serif;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #ccc;
+  padding: 0 15px;
+}
+.album-container .track-number-header p:hover {
+  color: #fff;
+}
+.album-container .track-number-header,
+.album-container .r-track {
+  width: 40px;
+  text-align: center;
+}
+.album-container .track-title-header,
+.album-container .track-title {
+  width: 40% !important;
+  margin-left: 0px;
+}
+.album-container .track-artist-header,
+.album-container .track-artist {
+  width: 30% !important;
+}
+.album-container .explicit-header,
+.album-container .track-explicit,
+.album-container .track-length-header,
+.album-container .track-length {
+  text-align: center;
+  width: 100px;
+}
+@media (max-width: 800px) {
+  .album-container .explicit-header,
+  .album-container .track-explicit,
+  .album-container .track-length-header,
+  .album-container .track-length {
+    display: none;
+  }
+}
+.album-container .user-track-item .fa:active {
+  color: #aaa;
+}
+.album-container .user-track-item:hover .r-track {
+  padding-top: 5px;
+}
+.album-container .user-track-item:hover .r-track .fa:first-of-type {
+  display: inline;
+}
+.album-container .user-track-item:hover .r-track span {
+  display: none;
+}
+.album-container .user-track-item.active .add-remove-section .fa {
+  display: inline !important;
+}
+.album-container .user-track-item.active .r-track {
+  padding-top: 5px;
+}
+.album-container .user-track-item.active .r-track .fa:first-of-type {
+  display: none;
+}
+.album-container .user-track-item.active .r-track .fa:last-of-type {
+  display: inline;
+}
+.album-container .user-track-item.active:hover .fa:first-of-type {
+  display: inline;
+}
+.album-container .user-track-item.active:hover .fa:last-of-type {
+  display: none;
+}
+
+/*# sourceMappingURL=albumTable.css.map */

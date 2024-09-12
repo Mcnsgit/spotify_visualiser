@@ -1,0 +1,38 @@
+.side-menu-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  background-color: #181818;
+  color: white;
+}
+
+.side-menu-search {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  margin: 10px;
+}
+
+.menu-item {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.menu-item.active {
+  background-color: #282828;
+}
+
+.library-header {
+  margin: 10px 0;
+  padding: 0 20px;
+}
+
+.user-playlist-container {
+  padding: 0 20px;
+}
+
+.new-playlist-button {
+  margin-top: 10px;
+}
