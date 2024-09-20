@@ -1,0 +1,64 @@
+.track-search-results {
+  display: none;
+  width: 30%;
+  height: 75vh;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+  color: aliceblue;
+  padding: 1em;
+}
+
+.track-search-results {
+  margin-bottom: 1em;
+  border-bottom: 1px solid gray;
+  padding-bottom: 1em;
+}
+
+.track img .track-img {
+  border-radius: 5px;
+  position: relative;
+  float: left;
+  top: 3px;
+}
+
+.track b {
+  font-weight: 1000;
+}
+
+.track button {
+  border: none;
+  border-radius: 25px;
+  background-color: #6ae703;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  float: right;
+  bottom: 60px;
+}
+
+.track button:hover {
+  background-color: #00b61e;
+  transform: scale(1.2);
+}
+
+.track-search-results hr {
+  width: 100%;
+  height: 1px;
+  background-color: gray;
+  border: none;
+}
+
+.track-search-results :active {
+  background-color: #00b61e;
+}
+
+@media (min-width: 400px) {
+  input[type=text]:focus ~ .track-search-results {
+    display: flex;
+  }
+}/*# sourceMappingURL=trackSearchResults.css.map */

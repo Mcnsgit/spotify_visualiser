@@ -1,10 +1,29 @@
-export default {
-  client_id: '1f42356ed83f46cc9ffd35c525fc8541',
-  client_secret: 'VITE_CLIENT_SECRET',
-  redirect_uri: 'https://localhost:3000',
-  scope: 'user-read-playback-state',
-  state_key: 'SPOTIFY_AUTH_ID',
-  access_token: 'VITE_ACCESS_TOKEN',
-  refresh_token: 'VITE_REFRESH_TOKEN',
-  refresh_code: 'VITE_REFRESH_CODE'
-};
+// export default {
+//   client_id: '1f42356ed83f46cc9ffd35c525fc8541',
+//   client_secret: 'VITE_CLIENT_SECRET',
+//   redirect_uri: 'http://localhost:3000',
+//   scopes: [
+//     'ugc-image-upload',
+//     'user-read-playback-state',
+//     'user-modify-playback-state',
+//     'user-read-currently-playing',
+//     'streaming',
+//     'app-remote-control',
+//     'user-read-email',
+//     'user-read-private',
+//     'playlist-read-collaborative',
+//     'playlist-modify-public',
+//     'playlist-read-private',
+//     'playlist-modify-private',
+//     'user-library-modify',
+//     'user-library-read',
+//     'user-top-read',
+//     'user-read-playback-position',
+//     'user-read-recently-played',
+//     'user-follow-read',
+//     'user-follow-modify'],
+//     state_key: 'SPOTIFY_AUTH_ID',
+//   access_token: 'VITE_ACCESS_TOKEN',
+//   refresh_token: 'VITE_REFRESH_TOKEN',
+//   refresh_code: 'VITE_REFRESH_CODE'
+// };

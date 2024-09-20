@@ -1,133 +1,134 @@
-import React, { useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import AuthService from "./services/AuthService.jsx";
-import { useStateProvider } from "./utils/StateProvider.jsx";
-import { GlobalStateProvider } from "./context/GlobalStateContext.jsx";
-import { reducerCases } from "./utils/Constants.jsx";
-import Dashboard from "./screens/Dashboard/Dashboard.jsx";
-import Library from "./screens/library/Library.jsx";
-import AudioPlayer from "./screens/Player/audioPlayer/index.jsx"; // Fixed casing
-import Login from "./screens/auth/login.jsx";
-import Visualizer from "./layout/MainSection/Visualiser/Visualiser.jsx";
-import "./App.scss";
-import { setClientToken } from "./api/ApiClient.jsx"; 
-import instance from "./utils/axios.jsx";
-import Favorites from "./screens/favorites/Favorites.jsx";
-import Player from "./screens/Player/Player.jsx";
-import WebPlayback from "./spotify/WebSDKPlayer.jsx";
-import useSpotify from "./hooks/useSpotify.jsx";
-// export default function App() {
-//   const [{ token }, dispatch] = useStateProvider();
-//   const [loading, setLoading] = useState(true); 
-//   const navigate = useNavigate();
-  
-//   useEffect(() => {
-//     const authenticateUser = async () => {
-//         const params = new URLSearchParams(window.location.search);
-//         const code = params.get('code');
+// src/App.jsx
+import React, { useEffect, useContext, useState,useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SpotifyWebApi from 'spotify-web-api-js';
+import { AuthContext } from './AuthContext'; // Import AuthContext
+import Dashboard from './screens/Dashboard/Dashboard';
 
-//         if (!token) {
-//           if (code) {
-//             try {
-//               const tokenData = await AuthService.getToken(code);
-//               AuthService.currentToken.save(tokenData);
-//               dispatch({ type: "SET_TOKEN", token: tokenData.access_token });
-//               window.history.replaceState({}, document.title, '/'); // Clean URL
-//               navigate("/dashboard");
-//             } catch (error) {
-//               console.error("Authentication failed", error);
-//               AuthService.redirectToSpotifyAuthorize();
-//             }
-//           } else {
-//             AuthService.redirectToSpotifyAuthorize();
-//           }
-//         } else {
-//           navigate("/dashboard");
-//         }
-//         setLoading(false);
-//       };
-  
-//       authenticateUser();
-//     }, [dispatch, token, navigate]);
-  
+import Header from './components/layout/Header/Header';
+import './App.scss';
 
-
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
-
-const App = () => {
-  const [{ token }, dispatch] = useStateProvider();
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  // Function to authenticate the user
-  const authenticateUser = async () => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-
-    // Check if token is already set
-    if (!token) {
-      if (code) {
-        try {
-          const tokenData = await AuthService.getToken(code);
-          AuthService.currentToken.save(tokenData);
-          dispatch({ type: "SET_TOKEN", token: tokenData.access_token });
-          window.history.replaceState({}, document.title, '/'); // Clean URL
-          navigate("/dashboard");
-        } catch (error) {
-          console.error("Authentication failed", error);
-          AuthService.redirectToSpotifyAuthorize();
-        }
-      } else {
-        AuthService.redirectToSpotifyAuthorize();
-      }
-    } else {
-      navigate("/dashboard");
-    }
-
-    setLoading(false);
-  };
-
-  // Call authenticateUser on mount
-  useEffect(() => {
-    authenticateUser();
-  }, [token, navigate, dispatch]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div className="App">
-      <div className="main-body">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={token ? <Dashboard /> : <Login />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/visualiser" element={<Visualizer />} />
-          <Route path="/player" element={<Player />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="*" element={<Login />} />
-        </Routes>
+import styled from 'styled-components';
+const UserProfile = ({ userData }) => (
+  <div id="user-profile">
+      <h1>Logged in as {userData.display_name}</h1>
+      <div className="media">
+        <div className="pull-left">
+          <img className="media-object" width="150" src={userData.images[0]?.url} alt="Profile" />
+        </div>
+        <div className="media-body">
+          <dl className="dl-horizontal">
+            <dt>Display name</dt><dd>{userData.display_name}</dd>
+            <dt>Id</dt><dd>{userData.id}</dd>
+            <dt>Email</dt><dd>{userData.email}</dd>
+            <dt>Spotify URI</dt><dd><a href={userData.external_urls.spotify}>{userData.external_urls.spotify}</a></dd>
+            <dt>Link</dt><dd><a href={userData.href}>{userData.href}</a></dd>
+            <dt>Profile Image</dt><dd><a href={userData.images[0]?.url}>{userData.images[0]?.url}</a></dd>
+            <dt>Country</dt><dd>{userData.country}</dd>
+          </dl>
+        </div>
       </div>
     </div>
   );
-};
+  
+  const OAuthInfo = ({ accessToken, refreshToken }) => (
+    <div id="oauth">
+      <h2>OAuth info</h2>
+      <dl className="dl-horizontal">
+        <dt>Access token</dt><dd className="text-overflow">{accessToken}</dd>
+        <dt>Refresh token</dt><dd className="text-overflow">{refreshToken}</dd>
+      </dl>
+    </div>
+  );
+  
 
-export default App;
+  const App = () => {
+    const { accessToken, refreshToken, setAccessToken: setAccessTokenContext } = useContext(AuthContext);
+    const [userData, setUserData] = useState(null);
+    const [error, setError] = useState(null);
+    const bodyRef = useRef();
+  
+    useEffect(() => {
+      if (!accessToken) {
+        console.error('Access token is missing');
+        return;
+      }
+  
+      const fetchUserData = async () => {
+        try {
+          const data = await getUserData(accessToken);
+          setUserData(data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          setError('Error fetching user data');
+        }
+      };
+  
+      fetchUserData();
+    }, [accessToken]);
+  
+    useEffect(() => {
+      if (!accessToken || !refreshToken) return;
+  
+      const refreshTokenInterval = setInterval(async () => {
+        try {
+          await refreshAccessToken(refreshToken, setAccessTokenContext);
+        } catch (error) {
+          console.error('Error refreshing access token:', error);
+        }
+      }, 1000 * 60 * 50); // Refresh every 50 minutes
+  
+      return () => clearInterval(refreshTokenInterval);
+    }, [accessToken, refreshToken, setAccessTokenContext]);
+  
+    return (
+      <>
 
-//           const token = window.localStorage.getItem("token");
-//           const hash = window.location.hash;
-//           window.location.hash = "";
-//           if (!token && hash) {
-//             const _token = hash.split("&")[0].split("=")[1];
-//             window.localStorage.setItem("token", _token);
-//             setToken(_token);
-//             setClientToken(_token);
-//           } else {
-//             setToken(token);
-//             setClientToken(token);
-//           }
-//           }, []);
+        <Header />
+        <BodyContainer ref={bodyRef}>
+          {!userData ? (
+            <div id="login">
+              <h1>This is an example of the Authorization Code flow</h1>
+              <a href="/login" className="btn btn-primary">Log in with Spotify</a>
+            </div>
+          ) : (
+            <div id="loggedin">
+              <UserProfile userData={userData} />
+              <OAuthInfo accessToken={accessToken} refreshToken={refreshToken} />
+              <button
+                className="btn btn-default"
+                id="obtain-new-token"
+                onClick={async () => {
+                  try {
+                    const newAccessToken = await refreshAccessToken(refreshToken);
+                    setAccessTokenContext(newAccessToken);
+                  } catch (error) {
+                    console.error('Error obtaining new token:', error);
+                  }
+                }}
+              >
+                Obtain new token using the refresh token
+              </button>
+            </div>
+          )}
+          {error && <div className="error">{error}</div>}
+        </BodyContainer>
+</>
+    );
+  };
+  
+  export default App;
+  const BodyContainer = styled.div`
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 1));
+  background-color: rgb(32, 70, 60);
+  &::-webkit-scrollbar {
+    width: 0.7rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+`;
+

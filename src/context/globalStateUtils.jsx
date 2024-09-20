@@ -1,12 +1,12 @@
-  import axios from '../utils/axios';
-  import { getAuthToken } from '../helpers/auth';
-  import { fetchUserPlaylists, fetchPlaylistTracks, playTrack as playTrackAPI, pausePlayback, fetchUserProfile } from '../api/api';
-  import AuthService from '../services/AuthService';
+  import api from '../utils/axios';
+
+  import { fetchUserPlaylists, fetchPlaylistTracks, playTrack as playTrackAPI, pausePlayback, fetchUserProfile } from '../utils/spotifyAPI';
+
   import SpotifyWebApi from 'spotify-web-api-js';
-  import instance from '../utils/axios';
-  import { setView } from './actions';
-import { current } from '@reduxjs/toolkit';
-import { containsTrack } from '../layout/MainSection/trackList/libraryActions';
+
+
+
+
 
 
   const spotifyApi = new SpotifyWebApi();
@@ -192,9 +192,9 @@ import { containsTrack } from '../layout/MainSection/trackList/libraryActions';
 
   export const setupAxiosInterceptors = (token) => {
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
-      delete axios.defaults.headers.common['Authorization'];
+      delete api.defaults.headers.common['Authorization'];
     }
   };
 
@@ -202,7 +202,7 @@ import { containsTrack } from '../layout/MainSection/trackList/libraryActions';
 
   export const fetchNowPlaying = async (token, dispatch) => {
     try {
-      const response = await instance.get('/me/player/currently-playing', {
+      const response = await api.get('/me/player/currently-playing', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -241,7 +241,7 @@ import { containsTrack } from '../layout/MainSection/trackList/libraryActions';
   };
 
   export const login = () => {
-    AuthService.login();
+    api.login();
   };
 
   export const logout = (dispatch) => {

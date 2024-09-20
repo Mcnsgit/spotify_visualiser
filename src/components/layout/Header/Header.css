@@ -1,0 +1,164 @@
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #191b1a; /* Primary Spotify color */
+  color: white;
+  width: 100%;
+  height: 80px;
+  box-sizing: border-box;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.main-header .header-left {
+  display: flex;
+  align-items: center;
+}
+.main-header .header-left h1 {
+  margin: 0;
+  font-size: 34px;
+  white-space: nowrap;
+}
+.main-header .search-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.main-header .search-container .search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e6e1e1;
+  border-radius: 50px;
+  padding: 5px 15px;
+  width: 80%;
+  max-height: 30px;
+  max-width: 400px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+.main-header .search-container .search-bar .search-icon {
+  margin-right: 15px;
+  color: #1db954;
+}
+.main-header .search-container .search-bar .search-input {
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  outline: none;
+  font-size: 15px;
+  flex: 1;
+}
+.main-header .search-container .track-search-results {
+  position: absolute;
+  display: none; /* Initially hidden */
+  list-style: none;
+  max-height: 400px;
+  width: 100%;
+  max-width: 400px;
+  top: 100%; /* Positioned right below the search bar */
+  left: 0;
+  overflow-y: auto;
+  background-color: #545353;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  padding: 10px;
+}
+.main-header .search-container .track-search-results.visible {
+  display: block; /* Display when results are available */
+}
+.main-header .search-container .track-search-item {
+  padding: 10px;
+  color: white;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+}
+.main-header .search-container .track-search-item:last-child {
+  border-bottom: none;
+}
+.main-header .search-container .track-search-item:hover {
+  background-color: #3e3e3e;
+}
+.main-header .user-profile {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.main-header .user-profile .details-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 0px;
+  background: rgb(24, 24, 24);
+}
+.main-header .user-profile .details-container .username {
+  color: 0ffff;
+  font-size: 14px;
+  position: relative;
+  top: -5px;
+  margin-left: 10px;
+  padding-right: 10px;
+}
+.main-header .user-profile .user-img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+.main-header .user-profile .username {
+  font-weight: bold;
+  margin-right: 10px;
+}
+.main-header .user-profile .dropdown {
+  position: relative;
+}
+.main-header .user-profile .dropdown .dropdown-btn, .main-header .user-profile .dropdown .dropdown-btn .fas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  padding: 5px;
+  border-radius: 50%;
+  background-color: #0f0f0f;
+  border: none;
+  outline: none;
+  margin-left: 10px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+.main-header .user-profile .dropdown .dropdown-btn:hover, .main-header .user-profile .dropdown .dropdown-btn .fas:hover {
+  color: #1db954;
+}
+.main-header .user-profile .dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: transparent;
+  color: black;
+  right: 0;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1002;
+  border-radius: 5px;
+}
+.main-header .user-profile .dropdown .dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.main-header .user-profile .dropdown .dropdown-content a:hover {
+  background-color: transparent;
+}
+.main-header .user-profile .dropdown:hover .dropdown-content {
+  display: block;
+  background-color: #0f0f0f;
+}/*# sourceMappingURL=Header.css.map */

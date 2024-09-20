@@ -1,0 +1,68 @@
+.right-side-menu {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 10px;
+  width: 210px;
+  background-color: #0e0e10;
+}
+.right-side-menu .queue {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -17px;
+  overflow-y: scroll;
+}
+.right-side-menu .buttom-section {
+  text-align: center;
+  width: 210px;
+  position: fixed;
+  bottom: 75px;
+}
+.right-side-menu .buttom-section .new-playlist {
+  height: 40px;
+  padding-top: 20px;
+  color: rgb(179, 179, 179);
+  background-color: #0e0e10;
+  border-top: 1px solid rgb(44, 44, 44);
+  font-family: "Proxima Thin", Georgia, sans-serif;
+}
+.right-side-menu .buttom-section .new-playlist:hover {
+  color: #1db954;
+  cursor: pointer;
+}
+.right-side-menu .buttom-section .new-playlist .fa {
+  padding-right: 5px;
+}
+
+.right-section {
+  width: 300px;
+  background-color: #121212;
+  color: #ffffff;
+  overflow-y: auto;
+}
+.right-section .library-header {
+  font-size: 18px;
+  margin: 20px 0 10px 10px;
+}
+.right-section .bottom-section {
+  padding: 10px;
+}
+
+.right-section .user-playlist-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.right-section .user-playlist-container li {
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.right-section .user-playlist-container li.active {
+  color: #1db954;
+}/*# sourceMappingURL=RightSideMenu.css.map */
