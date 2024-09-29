@@ -2,24 +2,28 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': '/src',
+      'fs': 'false',
+      'os': 'false',
+      'path': 'false',
+    },
+  },
   plugins: [react()],
   https: {
     key: 'key.pem',
     cert: 'cert.pem',
   },
-  server: { // Moved host and port configuration under server
-    host: 'localhost',
+  base: './',
+  server: {
     port: 3000,
     proxy: {
+      // Define the path(s) to proxy
       '/api': {
-        target: 'https://localhost:3001',
+        target: 'http://localhost:3001',  // Backend API
         changeOrigin: true,
-        secure: true, // Changed to true for better security
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('Origin', 'http://localhost:3000');
-          });
-        },
+        secure: false,
       },
     },
   },

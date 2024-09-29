@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { FaCaretDown } from "react-icons/fa";
 import axios from "axios";
-import { useAuth } from "../../../../AuthContext"; // Import the useAuth hook
+import { AuthContext } from "../../../../AuthContext"; // Import the useAuth hook
 import api from "../../../../utils/axios";
 
 export default function UserDetails() {
@@ -11,13 +11,13 @@ export default function UserDetails() {
   const [profileImage, setProfileImage] = useState("");
   const [displayName, setDisplayName] = useState("");
   const navigate = useNavigate();
-  const { accessToken } = useAuth(); // Access the access token from context
+  const { accessToken } = useContext(AuthContext); // Use useContext to access accessToken
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         // Use the access token in the request headers
-        const response = await axios.get("http://localhost:3001/me", {
+        const response = await axios.get("https://api.spotify.com/v1/me", {
           headers: {
             Authorization: `Bearer ${accessToken}`, // Include the access token
           },
@@ -40,7 +40,7 @@ export default function UserDetails() {
     } else {
       navigate("/login"); // Redirect to login if no access token
     }
-  }, [navigate, accessToken]); // Add accessToken to dependencies
+  }, [navigate, accessToken]);
 
   const handleDropdown = () => setDropdown((prev) => !prev);
   const handleLogout = () => {

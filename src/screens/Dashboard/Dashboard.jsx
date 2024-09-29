@@ -1,196 +1,225 @@
-// src/screens/Dashboard/Dashboard.jsx
-import React, { useEffect, useState, useRef, useContext } from "react";
-import styled from "styled-components";
-import "../../App.css";
-import Header from "../../components/layout/Header/Header";
-import Body from "./Body";
-import SpotifyWebApi from "spotify-web-api-js";
-import { AuthContext } from "../../AuthContext";
-import { refreshAccessToken, getUserData } from '../../utils/spotifyAPI';
+  // Dashboard.jsx
+  import React, { useEffect, useState, useContext } from 'react';
+  import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext';
+  import  {AuthProvider} from '../../AuthContext';
+  import styled from 'styled-components';
+  import Header from '../../components/layout/Header/Header';
+  import LeftSection from '../../components/layout/SideMenu/leftSection.jsx';
+  import axios from 'axios';
+  import { Form } from "react-bootstrap";
+  import TrackSearchResult from '../../components/layout/Header/trackSearch/trackSearchResults.jsx';
+  
+  const Dashboard = () => {
+    // const { accessToken } = localStorage.getItem('access_token');
+    // const [search, setSearch] = useState('');
+    // const [searchResults, setSearchResults] = useState([]);
+    // const [userData, setUserData] = useState(null);
+    // const navigate = useNavigate();
+  
+    // const fetchAccessToken = useContext(AuthContext);
 
-const UserProfile = ({ userData }) => (
-  <div id="user-profile">
-    <h1>Logged in as {userData.display_name}</h1>
-    <div className="media">
-      <div className="pull-left">
-        <img className="media-object" width="150" src={userData.images[0]?.url} alt="Profile" />
-      </div>
-      <div className="media-body">
-        <dl className="dl-horizontal">
-          <dt>Display name</dt><dd>{userData.display_name}</dd>
-          <dt>Id</dt><dd>{userData.id}</dd>
-          <dt>Email</dt><dd>{userData.email}</dd>
-          <dt>Spotify URI</dt><dd><a href={userData.external_urls.spotify}>{userData.external_urls.spotify}</a></dd>
-          <dt>Link</dt><dd><a href={userData.href}>{userData.href}</a></dd>
-          <dt>Profile Image</dt><dd><a href={userData.images[0]?.url}>{userData.images[0]?.url}</a></dd>
-          <dt>Country</dt><dd>{userData.country}</dd>
-        </dl>
-      </div>
-    </div>
-  </div>
-);
+    
 
-const OAuthInfo = ({ accessToken, refreshToken }) => (
-  <div id="oauth">
-    <h2>OAuth info</h2>
-    <dl className="dl-horizontal">
-      <dt>Access token</dt><dd className="text-overflow">{accessToken}</dd>
-      <dt>Refresh token</dt><dd className="text-overflow">{refreshToken}</dd>
-    </dl>
-  </div>
-);
+    // useEffect(() => {
+      
+    //   console.log('useEffect: accessToken:', accessToken);
+    //   if (accessToken) {
+    //     fetchUserData();
+    //   }
+    // }, [accessToken]);
+  
+    // const fetchUserData = async () => {
+    //   console.log('fetchUserData: accessToken:', accessToken);
+    //   try {
+    //     const response = await axios.get('https://api.spotify.com/v1/me', {
+    //       headers: { Authorization: `Bearer ${accessToken}` },
+    //     });
+    //     console.log('fetchUserData: response:', response.data);
+    //     setUserData(response.data);
+    //   } catch (error) {
+    //     console.error('Error fetching user data', error);
+    //   }
+    // };
+  
+    // const handleSearch = async (e) => {
+    //   console.log('handleSearch: searchQuery:', e.target.value);
+    //   const searchQuery = e.target.value;
+    //   setSearch(searchQuery);
+    //   if (!searchQuery) return;
+    //   try {
+    //     const response = await axios.get('https://api.spotify.com/v1/search', {
+    //       headers: { Authorization: `Bearer ${accessToken}` },
+    //       params: { q: searchQuery, type: 'track', limit: 20 },
+    //     });
+    //     console.log('handleSearch: response:', response.data);
+    //     setSearchResults(
+    //       response.data.tracks.items.map(track => ({
+    //         artist: track.artists[0].name,
+    //         title: track.name,
+    //         uri: track.uri,
+    //         albumUrl: track.album.images[0].url,
+    //       }))
+    //     );
+    //   } catch (error) {
+    //     console.error('Error searching tracks', error);
+    //   }
+    // };
+    // <input type="text" placeholder="Search tracks" value={search} onChange={handleSearch} />
+          // <div className="search-results">
+          //   {searchResults.map(track => (
+          //     <TrackSearchResult track={track} key={track.uri} />
+          //   ))}
+          // </div>
+  
+    return (
+      <DashboardContainer>
+        <HeaderContainer>
 
-const Dashboard = () => {
-  const { accessToken, refreshToken, setAccessToken: setAccessTokenContext } = useContext(AuthContext);
-  const [userData, setUserData] = useState(null);
-  const [error, setError] = useState(null);
-  const bodyRef = useRef();
+        </HeaderContainer>
+        <BodyContainer>
+        
+        </BodyContainer>
+        <SideMenuContainer>
 
-  useEffect(() => {
-    if (!accessToken) {
-      console.error('Access token is missing');
-      return;
+        </SideMenuContainer>
+      </DashboardContainer>
+    );
+  };
+  
+  export default Dashboard;
+  
+  const DashboardContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  `;
+
+  const HeaderContainer = styled.div`
+    .header {
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100px;
+      background: rgb(24, 24, 24);
+      color: white;
+      padding: 0 20px;
     }
 
-    const fetchUserData = async () => {
-      try {
-        const data = await getUserData(accessToken);
-        setUserData(data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError('Error fetching user data');
-      }
-    };
+    .header-title h1 {
+      font-size: 20px;
+      font-weight: 600;
+    }
 
-    fetchUserData();
-  }, [accessToken]);
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 50%;
+      position: relative;
+    }
 
-  useEffect(() => {
-    if (!accessToken || !refreshToken) return;
+    .details-container {
+      display: flex;
+      align-items: center;
+      padding-right: 30px;
+      background: rgb(24, 24, 24);
+      gap: 10px;
+    }
 
-    const refreshTokenInterval = setInterval(async () => {
-      try {
-        await refreshAccessToken(refreshToken, setAccessTokenContext);
-      } catch (error) {
-        console.error('Error refreshing access token:', error);
-      }
-    }, 1000 * 60 * 50); // Refresh every 50 minutes
+    .user-image {
+      border-radius: 50%;
+      height: 30px;
+    }
 
-    return () => clearInterval(refreshTokenInterval);
-  }, [accessToken, refreshToken, setAccessTokenContext]);
+    .username {
+      margin-left: 10px;
+    }
 
-  return (
-    <DashboardContainer>
-      <Header />
-      <BodyContainer ref={bodyRef}>
-        {!userData ? (
-          <div id="login">
-            <h1>This is an example of the Authorization Code flow</h1>
-            <a href="/login" className="btn btn-primary">Log in with Spotify</a>
-          </div>
-        ) : (
-          <div id="loggedin">
-            <UserProfile userData={userData} />
-            <OAuthInfo accessToken={accessToken} refreshToken={refreshToken} />
-            <button
-              className="btn btn-default"
-              id="obtain-new-token"
-              onClick={async () => {
-                try {
-                  const newAccessToken = await refreshAccessToken(refreshToken);
-                  setAccessTokenContext(newAccessToken);
-                } catch (error) {
-                  console.error('Error obtaining new token:', error);
-                }
-              }}
-            >
-              Obtain new token using the refresh token
-            </button>
-          </div>
-        )}
-        {error && <div className="error">{error}</div>}
-      </BodyContainer>
-    </DashboardContainer>
-  );
-};
+    .form {
+      font-family: "BioRhyme", serif;
+      width: 85%;
+      height: 30%;
+      background-color: rgba(0, 0, 0, 0.7);
+      border: 5px solid #00b4d8;
+      color: wheat;
+      padding: 1em;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      float: center;
+    }
 
-export default Dashboard;
-//   const { accessToken, refreshToken, setAccessToken: setAccessTokenContext } = useContext(AuthContext);
-//   const [userData, setUserData] = useState(null);
-//   const bodyRef = useRef();
-//   const [headerBackground, setHeaderBackground] = useState(false);
-//   const [view, setView] = useState("search");
+    input[type="text"] {
+      width: 80%;
+      padding: 15px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      outline: none;
+      transition: all 0.3s ease-in-out;
+      font-size: 16px;
+    }
 
-//   useEffect(() => {
-//     if (!accessToken) {
-//       console.error('Access token is missing');
-//       history.push('/login'); // Use history for navigation
-//       return;
-//     }
+    input[type="text"]:focus {
+      border-color: #00b4d8;
+      box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+    }
 
-//     const fetchUserData = async () => {
-//       try {
-//         const data = await getUserData(accessToken);
-//         setUserData(data);
-//       } catch (error) {
-//         console.error('Error fetching user data:', error);
-//       }
-//     };
-//     fetchUserData();
-//   }, [accessToken, history]);
+    button[type="submit"] {
+      width: 50%;
+      padding: 15px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 25px;
+      background-color: #00b4d8;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
 
-//   useEffect(() => {
-//     if (!accessToken || !refreshToken) return;
+    button[type="submit"]:hover {
+      background-color: #0077b6;
+      box-shadow: 0 0 10px rgba(0, 119, 182, 0.5);
+    }
 
-//     const refreshTokenInterval = setInterval(async () => {
-//       try {
-//         await refreshAccessToken(refreshToken, setAccessTokenContext);
-//       } catch (error) {
-//         // Optionally handle error (e.g., redirect to login)
-//       }
-//     }, 1000 * 60 * 50); // Refresh every 50 minutes
+    input[type="submit"]:active {
+      transform: scale(0.95);
+    }
 
-//     return () => clearInterval(refreshTokenInterval);
-//   }, [accessToken, refreshToken, setAccessTokenContext]);
+    input[type="submit"]:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+    }
+  `;
 
-//   return (
-//     <div className="h-screen bg-black">
-//       <div className="h-[90%] flex">
-//         <DashboardContainer>
-//           <Header
-//             headerBackground={headerBackground}
-//             userData={userData}
-//           />
-//           <BodyContainer ref={bodyRef}>
-//             <Body
-//               view={view}
-//               accessToken={accessToken}
-//             />
-//           </BodyContainer>
-//         </DashboardContainer>
-//       </div>
-//     </div>
-//   );
-// }
+  const SideMenuContainer = styled.div`
+    position: fixed;
+    width: 250px;
+    font-size: 20px;
+    top: 20px;
+    height: 100vh;
+    background-color: black;
+  `;
 
-const DashboardContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-`;
-
-const BodyContainer = styled.div`
-  flex: 1;
-  height: 100vh;
-  overflow-y: auto;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 1));
-  background-color: rgb(32, 70, 60);
-  &::-webkit-scrollbar {
-    width: 0.7rem;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-`;
-
+  const BodyContainer = styled.div`
+    flex: 1;
+    height: 100vh;
+    margin-left: 300px;
+    overflow-y: auto;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 1));
+    background-color: rgb(32, 70, 60);
+    &::-webkit-scrollbar {
+      width: 0.7rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+  `;

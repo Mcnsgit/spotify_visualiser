@@ -1,206 +1,176 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import crypto from 'crypto';
-import SpotifyWebApi from 'spotify-web-api-node';
+import dotenv from "dotenv"
+import express from "express"
+import cors from "cors"
+// import bodyParser from "body-parser"
 
-dotenv.config();
-
-const app = express();
-const PORT = 3001;
-
-// Middleware
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-}));
-app.use(cookieParser());
-app.use(express.json());
-// File paths
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename );
-
-app.use(express.static(__dirname + '/public'));
-const CLIENT_ID = process.env.VITE_SPOTIFY_CLIENT_ID;
-const CLIENT_SECRET = process.env.VITE_SPOTIFY_CLIENT_SECRET;
-const REDIRECT_URI = 'http://localhost:3001/callback'; // Server redirect URI
-const FRONTEND_URI = 'http://localhost:3000';
-
-if (!CLIENT_ID || !CLIENT_SECRET) {
-
-  console.error('Error: SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET is not set.');
-  process.exit(1);
-  
-}
-else if (CLIENT_ID && CLIENT_SECRET) {
-  console.log('SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET are set.');
-}
+import axios from "axios"
+import queryString from 'query-string';
+import crypto from 'crypto'
 
 
-// Spotify API Credentials
-const spotifyApi = new SpotifyWebApi({
-  clientId: CLIENT_ID,
-  clientSecret: CLIENT_SECRET,
-  redirectUri: REDIRECT_URI,
+dotenv.config()
+const client_id = process.env.VITE_SPOTIFY_CLIENT_ID || '1f42356ed83f46cc9ffd35c525fc8541';
+console.log(client_id)
+const client_secret = process.env.VITE_SPOTIFY_CLIENT_SECRET;
+console.log(client_secret)
+const redirectUri = 'http://localhost:3000'; // Ensure this matches your application settings
+const PORT =  3001
+
+const app = express()
+app.use(express.json())
+
+
+app.use(cors( {
+  origin: 'http://localhost:3000'
+}))
+// app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: true }))
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
 
-const stateKey = 'spotify_auth_state';
- const scopes = [
-    'ugc-image-upload',
+app.get('/login', function (req, res) {
+  console.log('Received login request');
+  const state = crypto.randomBytes(16).toString('hex');
+
+  // Check for Spotify API credentials
+  if (!client_id || !client_secret) {
+    console.error('Missing Spotify API credentials');
+    return res.status(500).send('Spotify credentials missing');
+  } else {
+    console.log('Spotify credentials received');
+  }
+  const redirect_uri = 'http://localhost:3000'; // Ensure this matches your application settings
+
+  // Define the state and scope
+  const scope = [
+    'user-read-private',
+    'user-read-email',
+    'playlist-read-private',
+    'user-library-read',
+    'user-library-modify',
     'user-read-playback-state',
     'user-modify-playback-state',
-    'user-read-currently-playing',
     'streaming',
-    'app-remote-control',
-    'user-read-email',
-    'user-read-private',
-    'playlist-read-collaborative',
-    'playlist-modify-public',
-    'playlist-read-private',
-    'playlist-modify-private',
-    'user-library-modify',
-    'user-library-read',
-    'user-top-read',
-    'user-read-playback-position',
-    'user-read-recently-played',
-    'user-follow-read',
-    'user-follow-modify'
   ];
+  res.redirect('https://accounts.spotify.com/authorize?' +
+    queryString.stringify({
+      response_type: 'code',
+      client_id: client_id,
+      scope: scope,
+      redirect_uri: redirect_uri,
+      state: state,
+      show_dialog: true,
+    }));
+  // Define the redirect URI
 
-
-  // Handles the login route
-  // Generates a random state string and stores it in an HTTP-only cookie
-  // Redirects the user to the Spotify authorization URL
-  // with the scope and state parameters
-  app.get('/login', (req, res) => {
-    const state = crypto.randomBytes(16).toString('hex');
-    // Store the state string in an HTTP-only cookie
-    res.cookie(stateKey, state, { httpOnly: true, sameSite: 'Lax' });
-  
-    // Generate the authorization URL with the scope and state parameters
-    const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
-  
-    // Redirect the user to the authorization URL
-    res.redirect(authorizeURL);
-  });
-
-  // Handles the callback route
-  // Retrieves the authorization code from the URL query
-  // Verifies that the state parameter is valid
-  // Exchanges the authorization code for an access token and refresh token
-  // Stores the tokens in HTTP-only cookies
-  // Redirects the user to the frontend application
-  app.get('/callback', async (req, res) => {
-    const code = req.query.code;
-    const state = req.query.state;
-    const storedState = req.cookies ? req.cookies[stateKey] : null;
-
-    // Verify that the state parameter is valid
-    if (state === null || state !== storedState) {
-      // If the state is invalid, redirect to an error page
-      res.redirect(`${FRONTEND_URI}/error/state_mismatch`);
-    } else {
-      // Clear the state cookie
-      res.clearCookie(stateKey);
-
-      try {
-        // Exchange the authorization code for an access token and refresh token
-        const data = await spotifyApi.authorizationCodeGrant(code);
-
-        const access_token = data.body['access_token'];
-        const refresh_token = data.body['refresh_token'];
-
-        // Set the access token and refresh token on the Spotify API client
-        spotifyApi.setAccessToken(access_token);
-        spotifyApi.setRefreshToken(refresh_token);
-        
-        // Store the tokens in HTTP-only cookies
-        res.cookie('access_token', access_token, { httpOnly: true, sameSite: 'Lax' });
-        res.cookie('refresh_token', refresh_token, { httpOnly: true, sameSite: 'Lax' });
-        res.cookie('logged_in', true, { httpOnly: true, sameSite: 'Lax' });      
-
-        
-        // Redirect to the frontend application with the tokens as query parameters
-        res.redirect(`${FRONTEND_URI}/dashboard#access_token=${access_token}&refresh_token=${refresh_token}`);
-        // Redirect to your frontend application
-      } catch (error) {
-        console.error('Error exchanging authorization code for tokens:', error);
-        // If there is an error, redirect to an error page
-        res.redirect(`${FRONTEND_URI}/error/invalid_token`);
-      }
-    }
-  });
-
-  // Handles the refresh token route
-  // Retrieves the refresh token from the URL query
-  // Exchanges the refresh token for a new access token
-  // Returns the new access token in the response
-  app.get('/refresh_token', async (req, res) => {
-    const refresh_token = req.query.refresh_token;
-
-    if (!refresh_token) {
-      // If the refresh token is missing, return a 400 error
-      return res.status(400).json({ error: 'Refresh token is missing' });
-    }
-
-    try {
-      // Set the refresh token on the Spotify API client
-      spotifyApi.setRefreshToken(refresh_token);
-      // Exchange the refresh token for a new access token
-      const data = await spotifyApi.refreshAccessToken();
-      const access_token = data.body['access_token'];
-
-      // Return the new access token in the response
-      res.json({
-        access_token: access_token,
-        expires_in: data.body['expires_in'],
-      });
-    } catch (error) {
-      console.error('Error refreshing access token:', error);
-      // If there is an error, return a 500 error
-      res.status(500).json({ error: 'Failed to refresh access token' });
-    }
-  });
-app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/');
+  // Redirect to Spotify's authorization page
+  console.log('Redirecting to Spotify authorization URL');
 });
 
-function validateToken(req, res, next) {
-  const access_token = req.cookies['access_token'];
-
-  if (!access_token) {
-    return res.status(401).json({ error: 'Access token is missing' });
-  }
-
-  spotifyApi.setAccessToken(access_token);
-
-  next();
-}
-
-// Protected routes
-const protectedRoutes = ['/me', '/play', '/pause', '/next', '/previous', '/volume', '/currently-playing'];
-app.use(protectedRoutes, validateToken);
-
-app.get('/me', async (req, res) => {
+// Route to handle the callback and exchange the code for tokens
+app.get('/callback', async (req, res) => {
+  const code = req.query.code || null;
   try {
-    const data = await spotifyApi.getMe();
-    res.json(data.body);
+    const response = await axios({
+      method: 'post',
+      url: 'https://accounts.spotify.com/api/token',
+      params: {
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: redirectUri,
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization:
+          'Basic ' +
+          Buffer.from(client_id + ':' + client_secret).toString('base64'),
+      },
+    });
+    const { access_token, refresh_token } = response.data;
+
+    // Redirect to the frontend dashboard with the access token and refresh token as query parameters
+    res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}&refresh_token=${refresh_token}`);
   } catch (error) {
-    console.error('Error fetching user data:', error);
-    if (error.statusCode === 401) {
-      res.status(401).json({ error: 'Unauthorized' });
-    } else {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+    console.error('Error exchanging code for tokens:', error.response ? error.response.data : error.message);
+    res.status(400).send('Failed to exchange code for tokens');
+  }
+});
+// Route to refresh the access token
+app.post('/refresh', async (req, res) => {
+  const refresh_token = req.body.refresh_token;
+
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'https://accounts.spotify.com/api/token',
+      params: {
+        grant_type: 'refresh_token',
+        refresh_token,
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization:
+          'Basic ' +
+          Buffer.from(client_id + ':' + client_secret).toString('base64'),
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error refreshing access token:', error.response ? error.response.data : error.message);
+    res.status(400).send('Failed to refresh access token');
   }
 });
 
+app.get('/search', async (req, res) => {
+  const query = req.query.q;
+  const type = req.query.type;
 
-// Start the server
+  if (!query) {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
+
+  if (!type || !['track', 'artist', 'album'].includes(type)) {
+    return res.status(400).json({ error: 'Invalid or missing type parameter' });
+  }
+
+  try {
+    const token = await getAccessToken();
+    const response = await axios.get('https://api.spotify.com/v1/search', {
+      params: { q: query, type },
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error searching:', error.response ? error.response.data : error.message);
+    res.status(error.response?.status || 500).json({ error: error.response?.data?.error?.message || 'Internal Server Error' });
+  }
+});
+
+const generateAuthHeader = () => {
+  const { client_id, client_secret } = process.env;
+  return `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString('base64')}`;
+};
+
+const getAccessToken = async () => {
+  try {
+    const authResponse = await axios.post('https://accounts.spotify.com/api/token',
+      new URLSearchParams({ grant_type: 'client_credentials' }),
+      {
+        headers: {
+          'Authorization': generateAuthHeader(),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+    return authResponse.data.access_token;
+  } catch (error) {
+    console.error('Error getting access token:', error.response ? error.response.data : error.message);
+    throw new Error('Unable to get access token');
+  }
+};
+
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Listening on port http://localhost:${PORT}`);
 });

@@ -1,0 +1,9 @@
+AudioVisualizerScene.jsx
+AudioVisualizerController.jsx
+AudioVisualizerUI.jsx
+SpectrumVisualizer.jsx
+WaveformVisualizer.jsx
+hooks/
+  useAudioVisualizerContext.js
+styles/
+  AudioVisualizer.css

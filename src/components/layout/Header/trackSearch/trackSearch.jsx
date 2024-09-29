@@ -1,80 +1,70 @@
 // src/components/layout/Header/trackSearch/Search.jsx
 
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect, useContext } from "react";
+
+import { Container, Form } from "react-bootstrap"
+
 import SpotifyWebApi from "spotify-web-api-js";
 import TrackSearchResults from "./trackSearchResults";
+import { AuthContext } from "../../../../AuthContext";
+
+import "./Search.scss";
 
 const spotifyApi = new SpotifyWebApi();
 
-export default function Search({ getInput }) {
-  const [search, setSearch] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+export default function Search({ onSearch }) {
+  const [query, setQuery] = useState('');
+  const [searchType, setSearchType] = useState('track');
 
-  useEffect(() => {
-    if (!search) {
-      setSearchResults([]);
-      return;
-    }
-
-    let cancel = false;
-
-    spotifyApi.searchTracks(search)
-      .then(data => {
-        if (cancel) return;
-        setSearchResults(
-          data.tracks.items.map(track => {
-            const smallestAlbumImage = track.album.images.reduce(
-              (smallest, image) => {
-                if (image.height < smallest.height) return image;
-                return smallest;
-              },
-              track.album.images[0]
-            );
-
-            return {
-              artist: track.artists[0].name,
-              title: track.name,
-              uri: track.uri,
-              albumUrl: smallestAlbumImage.url,
-            };
-          })
-        );
-      })
-      .catch(error => {
-        console.error("Error fetching search results:", error);
-      });
-
-    return () => (cancel = true);
-  }, [search]);
-
-  const handleInputChange = (event) => {
-    setSearch(event.target.value);
-    getInput(event.target.value);
+  const handleSearch = () => {
+    if (!query.trim()) return;
+    onSearch(searchType, query);
+    setQuery('');
   };
 
-  return (
-    <div className="header-search">
-      <div className="search-container">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search for songs, albums, artists..."
-          value={search}
-          onChange={handleInputChange}
-        />
-      </div>
-      {searchResults.map(track => (
-        <TrackSearchResults
-          key={track.uri}
-          tracks={[track]}
-          chooseTrack={(track) => console.log(track)}
-        />
-      ))}
-    </div>
-  );
-}
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSearch();
+    }
+  };
 
-Search.propTypes = {
-  getInput: PropTypes.func.isRequired,
-};``
+
+
+  
+  return (
+    <Container className="d-flex flex-column py-2" style={{ height: "100vh" }}>
+      <select
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+            className="form-select me-2"
+            aria-label="Search type"
+          >
+            <option value="track">Tracks</option>
+            <option value="artist">Artists</option>
+            <option value="album">Albums</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="form-control me-2"
+            aria-label="Search query"
+          />
+        <button onClick={handleSearch} className="btn btn-success">
+          Search
+        </button>
+      
+    </Container>
+  )
+  
+  // {searchResults.map(track => (
+  //   <TrackSearchResults
+  //     track={track}
+  //     key={track.uri}
+  //     chooseTrack={chooseTrack}
+  //   />
+  // ))}
+}
